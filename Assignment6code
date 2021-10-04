@@ -1,0 +1,178 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Passenger {
+
+    private String name;
+    private int carryOnBags;
+    private int checkedBags;
+
+    public Passenger(String name, int carryOnBags, int checkedBags) {
+        this.name = name;
+        this.carryOnBags = carryOnBags;
+        this.checkedBags = checkedBags;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCarryOnBags() {
+        return carryOnBags;
+    }
+
+    public void setCarryOnBags(int carryOnBags) {
+        this.carryOnBags = carryOnBags;
+    }
+
+    public int getCheckedBags() {
+        return checkedBags;
+    }
+
+    public void setCheckedBags(int checkedBags) {
+        this.checkedBags = checkedBags;
+    }
+
+    public String toString() {
+        return this.name + " has " + this.carryOnBags + " carry on bags and " + this.checkedBags + " checked bags";
+    }
+}
+
+abstract class Seat {
+    private int basePriceSeat;
+    private int costCarryOnBag;
+    private int costFirstCheckedBag;
+    private int costSecCheckedBag;
+    private int costAdditionalBag;
+    private Passenger passanger;
+    private int totalPrice;
+    private String ticketType;
+
+    public Seat(Passenger passanger, String ticketType) {
+        this.passanger = passanger;
+        this.ticketType = ticketType;
+        int totalCheckedBags = passanger.getCheckedBags();
+
+        if (this.ticketType == "First") {
+            this.basePriceSeat = 1000;
+            this.costCarryOnBag = passanger.getCarryOnBags() * 0;
+            this.costFirstCheckedBag = 0;
+            this.costSecCheckedBag = 0;
+            this.costAdditionalBag = 0;
+        } else if (this.ticketType == "Business") {
+            this.basePriceSeat = 750;
+            this.costCarryOnBag = passanger.getCarryOnBags() * 0;
+            this.costFirstCheckedBag = 0;
+            this.costSecCheckedBag = 0;
+            totalCheckedBags -= 2;
+            this.costAdditionalBag = totalCheckedBags * 50;
+
+        } else if (this.ticketType == "Economy") {
+            this.basePriceSeat = 400;
+            this.costCarryOnBag = passanger.getCarryOnBags() * 0;
+            this.costFirstCheckedBag = 0;
+            this.costSecCheckedBag = 50;
+            totalCheckedBags -= 2;
+            this.costAdditionalBag = totalCheckedBags * 50;
+
+        } else {
+            this.basePriceSeat = 250;
+            this.costCarryOnBag = passanger.getCarryOnBags() * 50;
+            this.costFirstCheckedBag = 50;
+            this.costSecCheckedBag = 100;
+            totalCheckedBags -= 2;
+            this.costAdditionalBag = totalCheckedBags * 100;
+
+        }
+
+        this.totalPrice = this.basePriceSeat + this.costCarryOnBag + this.costFirstCheckedBag + this.costSecCheckedBag
+                + this.costAdditionalBag;
+    }
+
+    public String toString() {
+        return passanger.toString() + " and paid $" + this.totalPrice;
+    }
+}
+
+class FirstClassSeat extends Seat {
+
+    public FirstClassSeat(Passenger passanger, String ticketType) {
+        super(passanger, ticketType);
+    }
+
+}
+
+
+class BusinessSeat extends Seat{
+
+    public BusinessSeat(Passenger passanger, String ticketType) {
+        super(passanger, ticketType);
+    }
+
+}
+
+class EconomySeat extends Seat {
+
+    public EconomySeat(Passenger passanger, String ticketType) {
+        super(passanger, ticketType);
+    }
+
+}
+
+class BasicEconomySeat extends Seat{
+
+    public BasicEconomySeat(Passenger passanger, String ticketType) {
+        super(passanger, ticketType);
+    }
+
+}
+
+public class Driver {
+    static Scanner in = new Scanner(System.in);
+
+    public static Passenger createPassenger() {
+        System.out.println("How many carry on bags?");
+        int carryOn = in.nextInt();
+        System.out.println("How many checked bags?");
+        int checked = in.nextInt();
+        System.out.println("Passenger Name?");
+        String name = in.next();
+        return new Passenger(name, carryOn, checked);
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Seat> list = new ArrayList<>();
+        int choice=0;
+        do {
+            System.out.println("What type of ticket do you want to sell");
+            System.out.println("1. BasicEconomy");
+            System.out.println("2. Economy Class");
+            System.out.println("3. Business Class");
+            System.out.println("4. First Class");
+            System.out.println("5. Quit");
+
+            choice = in.nextInt();
+            if (choice == 1) {
+                list.add(new BasicEconomySeat(createPassenger(), "Basic"));
+            } else if (choice == 2) {
+                list.add(new EconomySeat(createPassenger(), "Economy"));
+            } else if (choice == 3) {
+                list.add(new BusinessSeat(createPassenger(), "Business"));
+            } else if (choice == 4) {
+                list.add(new FirstClassSeat(createPassenger(), "First"));
+            } else if (choice == 5) {
+                System.out.println("\nManifest:");
+                for (int i = 0; i < list.size(); i++) {
+                    System.out.println(list.get(i).toString());
+                }
+            }
+            else {
+                System.out.println("\n Please Enter Valid choice !!\n");
+            }
+        } while (choice != 5);
+    }
+}
